@@ -110,7 +110,7 @@ with tab_de:
         st.write("- Đề thi chính thức môn Toán.")
         st.write("- Hướng dẫn giải chi tiết từng bước.")
         try:
-            with open("de_toan.pdf", "rb") as f_toan:
+            with open("De-thi-KSCL-lan-1.pdf", "rb") as f_toan:
                 st.download_button("⬇️ Tải file Toán (PDF)", data=f_toan, file_name="HDG_Toan.pdf", key="btn_toan")
         except FileNotFoundError:
             st.warning("⏳ Đang cập nhật tài liệu môn Toán...")
