@@ -106,18 +106,29 @@ with tab_de:
     st.write("### 📂 Tài liệu tham khảo sau kỳ thi")
     st.info("Các em tải đề thi và hướng dẫn giải chi tiết để tự đối chiếu lại bài làm của mình.")
     
-    # Khu vực tải file (Thầy sẽ cần để các file PDF vào cùng thư mục nếu muốn chức năng này hoạt động thật)
     with st.expander("📐 Môn Toán (Đề & Hướng dẫn giải chi tiết)", expanded=True):
         st.write("- Đề thi chính thức môn Toán.")
         st.write("- Hướng dẫn giải chi tiết từng bước.")
-        st.download_button("⬇️ Tải file Toán (PDF)", data=b"Noi dung file Toan", file_name="HDG_Toan.pdf", key="btn_toan")
-        
+        try:
+            with open("de_toan.pdf", "rb") as f_toan:
+                st.download_button("⬇️ Tải file Toán (PDF)", data=f_toan, file_name="HDG_Toan.pdf", key="btn_toan")
+        except FileNotFoundError:
+            st.warning("⏳ Đang cập nhật tài liệu môn Toán...")
+            
     with st.expander("📝 Môn Ngữ Văn (Đề & Đáp án)"):
         st.write("- Đề thi chính thức môn Ngữ Văn.")
         st.write("- Dàn ý chi tiết và biểu điểm chấm.")
-        st.download_button("⬇️ Tải file Văn (PDF)", data=b"Noi dung file Van", file_name="HDG_Van.pdf", key="btn_van")
+        try:
+            with open("de_van.pdf", "rb") as f_van:
+                st.download_button("⬇️ Tải file Văn (PDF)", data=f_van, file_name="HDG_Van.pdf", key="btn_van")
+        except FileNotFoundError:
+            st.warning("⏳ Đang cập nhật tài liệu môn Văn...")
 
     with st.expander("🌍 Môn Tiếng Anh (Đề & Đáp án)"):
         st.write("- Đề thi chính thức môn Tiếng Anh.")
         st.write("- Đáp án trắc nghiệm và giải thích ngữ pháp.")
-        st.download_button("⬇️ Tải file Anh (PDF)", data=b"Noi dung file Anh", file_name="HDG_Anh.pdf", key="btn_anh")
+        try:
+            with open("de_anh.pdf", "rb") as f_anh:
+                st.download_button("⬇️ Tải file Anh (PDF)", data=f_anh, file_name="HDG_Anh.pdf", key="btn_anh")
+        except FileNotFoundError:
+            st.warning("⏳ Đang cập nhật tài liệu môn Tiếng Anh...")
