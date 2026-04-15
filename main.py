@@ -21,30 +21,37 @@ st.markdown('<div class="sub-title">Kỳ thi khảo sát chất lượng định
 # 2. XỬ LÝ DỮ LIỆU TỰ ĐỘNG TỪ EXCEL
 # ==========================================
 @st.cache_data
+# ==========================================
+# 2. XỬ LÝ DỮ LIỆU TỰ ĐỘNG TỪ EXCEL (BẢN CHỐNG LỖI)
+# ==========================================
+@st.cache_data
 def load_data():
     try:
-        # Đọc file Excel do thầy Quân chuẩn bị
+        # Đọc file Excel
         df = pd.read_excel("diem_thi.xlsx")
         
-        # Đảm bảo các cột điểm là dạng số, điền 0 nếu bỏ trống
+        # 1. SỬA LỖI SỐ BÁO DANH: Ép kiểu chữ, xóa đuôi '.0' nếu Excel tự thêm vào, và xóa khoảng trắng dư thừa
+        df['SBD'] = df['SBD'].astype(str).str.replace(r'\.0$', '', regex=True).str.strip()
+        
+        # 2. SỬA LỖI CỘT TRỐNG: Đảm bảo nếu thầy bỏ trống cột (chưa thi), web sẽ tự gán bằng 0 để không bị sập
         for col in ['Toan', 'Van', 'Anh']:
-            df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0)
+            if col not in df.columns:
+                df[col] = 0.0 # Tạo luôn cột nếu lỡ bị xóa mất tiêu đề
+            # Ép tất cả về dạng số, lỗi/trống thì biến thành 0
+            df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0.0)
             
         # Tự động tính Tổng điểm
         df['TongDiem'] = df['Toan'] + df['Van'] + df['Anh']
         
-        # Tự động xếp hạng (Hạng 1 là cao nhất)
+        # Tự động xếp hạng
         df['HangToan'] = df['Toan'].rank(method='min', ascending=False).astype(int)
         df['HangVan'] = df['Van'].rank(method='min', ascending=False).astype(int)
         df['HangAnh'] = df['Anh'].rank(method='min', ascending=False).astype(int)
         df['HangTong'] = df['TongDiem'].rank(method='min', ascending=False).astype(int)
         
-        # Chuyển cột SBD về dạng chuỗi để dễ tìm kiếm
-        df['SBD'] = df['SBD'].astype(str).str.strip()
-        
         return df
-    except FileNotFoundError:
-        st.error("⚠️ Hệ thống chưa tìm thấy file dữ liệu điểm. Thầy vui lòng cập nhật file 'diem_thi.xlsx'!")
+    except Exception as e:
+        st.error(f"⚠️ Hệ thống đang cập nhật dữ liệu. Vui lòng quay lại sau! (Mã lỗi nội bộ: {e})")
         return pd.DataFrame() 
 
 df = load_data()
